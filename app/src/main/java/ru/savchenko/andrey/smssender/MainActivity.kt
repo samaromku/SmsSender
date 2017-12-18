@@ -5,8 +5,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.telephony.SmsManager
-import android.util.Log
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import io.victoralbertos.rx2_permissions_result.RxPermissionsResult
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,9 +17,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if(FirebaseInstanceId.getInstance()!=null)
-        Log.i(TAG, FirebaseInstanceId.getInstance().getToken())
 
         FirebaseMessaging.getInstance().subscribeToTopic("pizda");
 
