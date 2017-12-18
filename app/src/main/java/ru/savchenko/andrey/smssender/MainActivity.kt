@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     private fun sendSMS() {
         if(checkRussiaLength()) {
             val sms = SmsManager.getDefault()
-            sms.sendTextMessage(tvPhone.text.toString(), null, "Тестовый код " + Math.random() * 9999 + " для " + tvName.text.toString(), null, null)
+            sms.sendTextMessage(tvPhone.text.toString(), null, "Тестовый код " + (Math.random() * 9999).toInt() + " для " + tvName.text.toString(), null, null)
         }
     }
 }
