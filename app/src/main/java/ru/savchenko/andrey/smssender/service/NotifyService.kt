@@ -46,6 +46,7 @@ class NotifyService : FirebaseMessagingService() {
         if (remoteMessage.data.size > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.data)
             Log.i(TAG, "data text" + remoteMessage.data["text"])
+            sendNotification(getPhoneNumber(remoteMessage.data.get("message")!!), (remoteMessage.data.get("title")!!))
             //
             //            if (/* Check if data needs to be processed by long running job */ true) {
             //                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
@@ -61,13 +62,20 @@ class NotifyService : FirebaseMessagingService() {
         if (remoteMessage.notification != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.notification!!.body!!)
             Log.i(TAG, remoteMessage.data["text"] + "text from data")
-            sendNotification(remoteMessage.notification!!.body!!)
+            sendNotification(remoteMessage.notification!!.body!!, "noTitle")
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
     }
     // [END receive_message]
+
+    fun getPhoneNumber(allNumber:String):String{
+        val first = allNumber.replace("-", "")
+        val second = first.replace("(", "")
+        val third = second.replace(")", "")
+        return third
+    }
 
     /**
      * Schedule a job using FirebaseJobDispatcher.
@@ -96,9 +104,9 @@ class NotifyService : FirebaseMessagingService() {
      *
      * @param messageBody FCM message body received.
      */
-    private fun sendNotification(messageBody: String) {
+    private fun sendNotification(messageBody: String, title:String) {
         println(messageBody)
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java).putExtra("title", title).putExtra("message", messageBody)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT)
@@ -108,7 +116,7 @@ class NotifyService : FirebaseMessagingService() {
                 //.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
                 .setPriority(Notification.PRIORITY_MAX)
                 .setSmallIcon(R.drawable.ic_mes)
-                .setContentTitle("FCM Message")
+                .setContentTitle(title)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setVibrate(longArrayOf(1000, 1000))
